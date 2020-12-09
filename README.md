@@ -1,5 +1,10 @@
 # La Cabane Aux Etoiles
 
+## Install and run locally
+```
+npm install
+npm run dev
+```
 ## Env variables
 
 ```
