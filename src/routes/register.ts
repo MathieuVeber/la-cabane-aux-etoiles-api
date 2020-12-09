@@ -34,10 +34,10 @@ router.post('/', async (req: Request, res: Response) => {
     }, process.env.TOKEN_SECRET || 'secret');
 
     res.header('Set-Cookie', token)
-      .status(200)
-      .json({
-        parent: newParent.getSafeParent()
-      });
+       .status(200)
+       .json({
+         parent: newParent.getSafeParent()
+       });
     })
 });
 export default router;
