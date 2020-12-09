@@ -27,13 +27,5 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     })
   })(req, res, next);
 
-  // const parent = new Parent({
-  //   email: 'toto',
-  //   firstname: 'Thomas',
-  //   lastname: 'Falcone',
-  // });
-  // await parent.setPassword('tamere');
-  // parent.save();
-  // res.send('C"est fait');
 });
 export default router;
