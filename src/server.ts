@@ -45,7 +45,7 @@ app.get("/teapot", authenticatedRoute(), (req: Request, res: Response) => {
     .status(418)
     .send(
       `Hello ${
-        (req.user as IParent).firstname
+        (req.user as IParent).firstName
       } ! I am a teapot (ou ton p'tit pote)`
     );
 });

@@ -1,0 +1,124 @@
+openapi: 3.0.1
+info:
+  title: La Cabane Aux Etoiles - API
+  description: 'This is the API documentation for La Cabane Aux Etoiles.'
+  contact:
+    email: noreply@noreply.noreply
+  version: 1.0.0
+servers:
+- url: http://localhost:3002
+tags:
+- name: auth
+  description: Authentication routes
+paths:
+  /login:
+    post:
+      tags:
+      - auth
+      summary: Log into the app
+      operationId: login
+      requestBody:
+        description: Enter your credentials in the body
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: "john.wick@mail.com"
+                password:
+                  type: string
+                  example: "my-secure-password"
+        required: true
+      responses:
+        200:
+          description: The Parent is now logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parent'
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: JWT Token that will be used for further requests
+        401:
+          description: Parent not found or password is incorrect
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Not Authorized'
+        500:
+          $ref: '#/components/responses/Unexpected'
+  /register:
+    post:
+      tags:
+      - auth
+      summary: Register and log the user into the app
+      operationId: register
+      requestBody:
+        description: Enter your informations in the body
+        content:
+          application/json:
+            schema:
+              properties:
+                firstName:
+                  type: string
+                  example: "John"
+                lastName:
+                  type: string
+                  example: "Wick"
+                email:
+                  type: string
+                  example: "john.wick@mail.com"
+                password:
+                  type: string
+                  example: "my-secure-password"
+        required: true
+      responses:
+        200:
+          description: The Parent is now logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parent'
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: JWT Token that will be used for further requests
+        400:
+          description: Parent already exists
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Parent already exists'
+        500:
+          $ref: '#/components/responses/Unexpected'
+components:
+  responses:
+    Unexpected:
+      description: The server encountered an unexpected error
+      content:
+        application/json:
+          schema:
+            type: string
+            example: 'Error while ...'
+  schemas:
+    Parent:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "lkze2f1klzfk45lzekf"
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Wick"
+        email:
+          type: string
+          example: "john.wick@mail.com"
