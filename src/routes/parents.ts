@@ -5,6 +5,8 @@ import selfRestrictedRoute from "../middlewares/selfRestrictedRoute";
 import selfOrAdminRestrictedRoute from "../middlewares/selfOrAdminRestrictedRoute";
 import ErrorTypes from "../utils/ErrorTypes";
 import { IParent, Parent } from "../models/parents";
+import requestValidation from "../middlewares/requestValidation";
+import { patchParentSchema } from "../validations/parents";
 
 // TODO-MV :
 // - Write validation
@@ -33,6 +35,7 @@ router.patch(
   "/:idParent",
   authenticatedRoute,
   selfRestrictedRoute,
+  requestValidation(patchParentSchema),
   async (req: Request, res: Response) => {
     let parent: IParent | null;
     try {

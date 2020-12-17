@@ -1,6 +1,7 @@
 enum ErrorTypes {
   // 400
   EMAIL_ALREADY_TAKEN = "EMAIL_ALREADY_TAKEN",
+  BAD_REQUEST = "BAD_REQUEST",
   // 401
   TOKEN_ERROR = "TOKEN_ERROR", // TODO-MV : will be replaced and clarified
   // 403
