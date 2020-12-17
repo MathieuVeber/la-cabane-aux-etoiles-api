@@ -9,7 +9,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
-import meRoute from "./routes/me";
 import authRoute from "./routes/auth";
 import parentsRoute from "./routes/parents";
 import { authenticationInitialize } from "./config/authentication";
@@ -34,7 +33,6 @@ app.use(
   })
 );
 
-app.use("/me", meRoute);
 app.use("/auth", authRoute);
 app.use("/parents", parentsRoute);
 

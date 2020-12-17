@@ -1,12 +1,13 @@
 import Router from "express";
 import { Request, Response, NextFunction } from "express";
 import ErrorTypes from "../utils/ErrorTypes";
-import { IParent, Parent } from "../models/parents";
+import { IParent, ISafeParent, Parent } from "../models/parents";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import JWToken from "../utils/JWToken";
 import requestValidation from "../middlewares/requestValidation";
 import { loginSchema, registerSchema } from "../validations/parents";
+import authenticatedRoute from "../middlewares/authenticatedRoute";
 
 // TODO-MV :
 // - Comment this file
@@ -52,7 +53,7 @@ router.post(
         process.env.TOKEN_SECRET || "secret"
       );
 
-      res.header("Set-Cookie", token).status(200).json({
+      res.header("Set-Cookie", `jwt=${token}; Path=/`).status(200).json({
         parent: newParent.getSafeParent(),
       });
     });
@@ -81,12 +82,17 @@ router.post(
           process.env.TOKEN_SECRET || "secret"
         );
 
-        res.header("Set-Cookie", `jwt=${token}`).status(200).json({
+        res.header("Set-Cookie", `jwt=${token}; Path=/`).status(200).json({
           parent: parent.getSafeParent(),
         });
       });
     })(req, res, next);
   }
 );
+
+router.get("/", authenticatedRoute, async (req: Request, res: Response) => {
+  const safeParent: ISafeParent = (req.user as IParent).getSafeParent();
+  return res.status(200).json(safeParent);
+});
 
 export default router;

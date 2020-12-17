@@ -14,9 +14,7 @@ import passport from "passport";
     Can be combined with one of the RestrictedRoute middlewares.
 */
 
-const authenticatedRoute = () => {
-  passport.authenticate("jwt", { session: false });
-};
+const authenticatedRoute = passport.authenticate("jwt", { session: false });
 
 // TODO-MV :
 // - Callback function to handle the response(ERROR_TYPES)

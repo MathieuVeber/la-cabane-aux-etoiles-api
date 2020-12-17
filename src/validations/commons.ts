@@ -18,7 +18,7 @@ export const addressSchema = Joi.object({
   complement: Joi.string().trim().empty("").max(100),
   city: Joi.string().required().trim().max(64),
   zipCode: Joi.string().required().trim().uppercase().max(10),
-  country: Joi.string().required().trim().lowercase().max(64).default("france"),
+  country: Joi.string().trim().empty("").lowercase().max(64).default("france"),
 });
 
 export const patchAddressSchema = Joi.object({
