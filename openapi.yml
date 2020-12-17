@@ -1,20 +1,39 @@
 openapi: 3.0.1
 info:
   title: La Cabane Aux Etoiles - API
-  description: 'This is the API documentation for La Cabane Aux Etoiles.'
+  description: 'This is the API documentation for "La Cabane Aux Etoiles".'
   contact:
     email: noreply@noreply.noreply
   version: 1.0.0
 servers:
-- url: http://localhost:3002
+  - url: http://localhost:3002
 tags:
-- name: auth
-  description: Authentication routes
+  - name: auth
+    description: Authentication routes
+  - name: parents
+    description: Parent related routes
 paths:
-  /login:
+  /auth/me:
+    get:
+      tags:
+        - auth
+      summary: Get connected user data
+      operationId: me
+      responses:
+        200:
+          description: Return his profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Parent"
+        401:
+          $ref: "#/components/responses/TOKEN_ERROR"
+        500:
+          $ref: "#/components/responses/SERVER_ERROR"
+  /auth/login:
     post:
       tags:
-      - auth
+        - auth
       summary: Log into the app
       operationId: login
       requestBody:
@@ -25,10 +44,10 @@ paths:
               properties:
                 email:
                   type: string
-                  example: "john.wick@mail.com"
+                  example: john.wick@mail.com
                 password:
                   type: string
-                  example: "my-secure-password"
+                  example: my-secure-password
         required: true
       responses:
         200:
@@ -36,89 +55,272 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Parent'
-          headers:
-            Set-Cookie:
-              schema:
-                type: string
-              description: JWT Token that will be used for further requests
-        401:
-          description: Parent not found or password is incorrect
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: 'Not Authorized'
-        500:
-          $ref: '#/components/responses/Unexpected'
-  /register:
-    post:
-      tags:
-      - auth
-      summary: Register and log the user into the app
-      operationId: register
-      requestBody:
-        description: Enter your informations in the body
-        content:
-          application/json:
-            schema:
-              properties:
-                firstName:
-                  type: string
-                  example: "John"
-                lastName:
-                  type: string
-                  example: "Wick"
-                email:
-                  type: string
-                  example: "john.wick@mail.com"
-                password:
-                  type: string
-                  example: "my-secure-password"
-        required: true
-      responses:
-        200:
-          description: The Parent is now logged in
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Parent'
+                $ref: "#/components/schemas/Parent"
           headers:
             Set-Cookie:
               schema:
                 type: string
               description: JWT Token that will be used for further requests
         400:
-          description: Parent already exists
+          $ref: "#/components/responses/BAD_REQUEST"
+        401:
+          $ref: "#/components/responses/BAD_CREDENTIALS"
+        500:
+          $ref: "#/components/responses/SERVER_ERROR"
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register and log the user into the app
+      operationId: register
+      requestBody:
+        description: Enter your information in the body
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Parent"
+        required: true
+      responses:
+        200:
+          description: The Parent is now logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Parent"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: JWT Token that will be used for further requests
+        400:
+          description: Either the email is already taken or the body syntax is incorrect. More details below.
           content:
             text/plain:
               schema:
-                type: string
-                example: 'Parent already exists'
+                oneOf:
+                  - $ref: "#/components/responses/BAD_REQUEST"
+                  - $ref: "#/components/responses/EMAIL_ALREADY_TAKEN"
         500:
-          $ref: '#/components/responses/Unexpected'
-components:
-  responses:
-    Unexpected:
-      description: The server encountered an unexpected error
-      content:
-        application/json:
+          $ref: "#/components/responses/SERVER_ERROR"
+  /parents/{idParent}:
+    get:
+      tags:
+        - parents
+      summary: Retreive a parent profile
+      operationId: getParent
+      parameters:
+        - in: path
+          name: idParent
           schema:
             type: string
-            example: 'Error while ...'
+          required: true
+          description: id of the requested parent
+      responses:
+        200:
+          description: Return the requested profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Parent"
+        401:
+          $ref: "#/components/responses/TOKEN_ERROR"
+        403:
+          $ref: "#/components/responses/ACCESS_FORBIDDEN"
+        404:
+          $ref: "#/components/responses/PARENT_NOT_FOUND"
+        500:
+          $ref: "#/components/responses/SERVER_ERROR"
+    patch:
+      tags:
+        - parents
+      summary: Update a parent profile
+      operationId: updateParent
+      parameters:
+        - in: path
+          name: idParent
+          schema:
+            type: string
+          required: true
+          description: id of the selected parent
+      requestBody:
+        description: Enter the information that needs to be updated
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Parent"
+        required: true
+      responses:
+        200:
+          description: Return the updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Parent"
+        401:
+          $ref: "#/components/responses/TOKEN_ERROR"
+        403:
+          $ref: "#/components/responses/ACCESS_FORBIDDEN"
+        404:
+          $ref: "#/components/responses/PARENT_NOT_FOUND"
+        500:
+          $ref: "#/components/responses/SERVER_ERROR"
+    delete:
+      tags:
+        - parents
+      summary: Delete a parent profile
+      operationId: deleteParent
+      parameters:
+        - in: path
+          name: idParent
+          schema:
+            type: string
+          required: true
+          description: id of the selected parent
+      responses:
+        204:
+          description: The parent has been successfully deleted
+        401:
+          $ref: "#/components/responses/TOKEN_ERROR"
+        403:
+          $ref: "#/components/responses/ACCESS_FORBIDDEN"
+        404:
+          $ref: "#/components/responses/PARENT_NOT_FOUND"
+        500:
+          $ref: "#/components/responses/SERVER_ERROR"
+components:
+  responses:
+    EMAIL_ALREADY_TAKEN:
+      description: The user must choose another email or has already an account
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: EMAIL_ALREADY_TAKEN
+    BAD_REQUEST:
+      description: The body syntax seems incorrect, please refer to the request documentation for further explanation.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: BAD_REQUEST
+    BAD_CREDENTIALS:
+      description: Either the email or the password is incorrect
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: BAD_CREDENTIALS
+    TOKEN_ERROR:
+      description: Token is missing or invalid
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: TOKEN_ERROR
+    ACCESS_FORBIDDEN:
+      description: Permissions aren't sufficient to make this request
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: ACCESS_FORBIDDEN
+    PARENT_NOT_FOUND:
+      description: The requested parent doesn't exists
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: PARENT_NOT_FOUND
+    SERVER_ERROR:
+      description: Something wrong (and unexpected) happened on the server side
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: SERVER_ERROR
   schemas:
     Parent:
       type: object
       properties:
-        id:
+        _id:
           type: string
-          example: "lkze2f1klzfk45lzekf"
+          example: lkze2f1klzfk45lzekf
         firstName:
           type: string
-          example: "John"
+          example: John
         lastName:
           type: string
-          example: "Wick"
+          example: Wick
         email:
           type: string
-          example: "john.wick@mail.com"
+          example: john.wick@mail.com
+        address:
+          $ref: "#/components/schemas/Address"
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/Child"
+        isAdmin:
+          type: boolean
+          example: false
+    ParentInput:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Wick
+        email:
+          type: string
+          example: john.wick@mail.com
+        password:
+          type: string
+          example: "my-secure-password"
+        address:
+          $ref: "#/components/schemas/Address"
+    Child:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Hermione
+        lastName:
+          type: string
+          example: Weasley
+        birthdate:
+          $ref: "#/components/schemas/Date"
+        note:
+          type: string
+          example: She's allergic to peanut
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+          example: 7, James Bond Street
+        complement:
+          type: string
+          example: Bond Building, James Bond Appartment
+        city:
+          type: string
+          example: Montcuq
+        zipCode:
+          type: string
+          example: 46201
+        country:
+          type: string
+          example: France
+    Date:
+      type: object
+      properties:
+        day:
+          type: integer
+          example: 20
+        month:
+          type: integer
+          example: 4
+        year:
+          type: integer
+          example: 2012

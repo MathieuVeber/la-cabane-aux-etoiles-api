@@ -69,7 +69,7 @@ router.post(
         return res.status(500).send(ErrorTypes.SERVER_ERROR);
       }
       if (!parent) {
-        return res.status(401).send(ErrorTypes.TOKEN_ERROR);
+        return res.status(401).send(ErrorTypes.BAD_CREDENTIALS);
       }
 
       req.logIn(parent, (err) => {
