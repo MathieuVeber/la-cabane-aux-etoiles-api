@@ -2,7 +2,7 @@ import { Document, Schema, model, Model } from "mongoose";
 
 export interface IWorkshop extends Document {
   name: string;
-  numberParticipants: number;
+  numberOfParticipants: number;
   pricePerParticipant: number;
   minAge: number;
   maxAge: number;
@@ -11,7 +11,7 @@ export interface IWorkshop extends Document {
 
 const workshopSchema = new Schema({
   name: { type: String, required: true, unique: true },
-  numberParticipants: { type: Number, required: true },
+  numberOfParticipants: { type: Number, required: true },
   pricePerParticipant: { type: Number, required: true },
   minAge: { type: Number, required: true },
   maxAge: { type: Number, required: true },

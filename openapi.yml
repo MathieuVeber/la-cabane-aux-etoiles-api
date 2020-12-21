@@ -12,6 +12,8 @@ tags:
     description: Authentication routes
   - name: parents
     description: Parent related routes
+  - name: workshops
+    description: Workshop related routes
 paths:
   /auth/me:
     get:
@@ -187,6 +189,121 @@ paths:
           $ref: "#/components/responses/PARENT_NOT_FOUND"
         500:
           $ref: "#/components/responses/SERVER_ERROR"
+  /workshops:
+    get:
+      tags:
+        - workshops
+      summary: Get all workshops
+      operationId: getWorkshops
+      responses:
+        200:
+          description: Return all the existing workshop
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Workshop"
+        500:
+          $ref: '#/components/responses/SERVER_ERROR'
+    post:
+      tags:
+        - workshops
+      summary: Create a workshop
+      operationId: postWorkshop
+      responses:
+        200:
+          description: Return the new workshop
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workshop"
+        401:
+          $ref: "#/components/responses/TOKEN_ERROR"
+        403:
+          $ref: "#/components/responses/ACCESS_FORBIDDEN"
+        500:
+          $ref: '#/components/responses/SERVER_ERROR'
+  /workshops/{idWorkshop}:
+    get:
+      tags:
+        - workshops
+      summary: Retrieve a workshop
+      operationId: getWorkshop
+      parameters:
+        - in: path
+          name: idWorkshop
+          schema:
+            type: string
+          required: true
+          description: id of the requested workshop
+      requestBody:
+        description: Enter the information that needs to be updated
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Workshop"
+      responses:
+        200:
+          description: Return a given workshop
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workshop"
+        404:
+          $ref: "#/components/responses/WORKSHOP_NOT_FOUND"
+        500:
+          $ref: '#/components/responses/SERVER_ERROR'
+    patch:
+      tags:
+        - workshops
+      summary: Update a workshop
+      operationId: patchWorkshop
+      parameters:
+        - in: path
+          name: idWorkshop
+          schema:
+            type: string
+          required: true
+          description: id of the requested workshop
+      responses:
+        200:
+          description: Return the updated workshop
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workshop"
+        401:
+          $ref: "#/components/responses/TOKEN_ERROR"
+        403:
+          $ref: "#/components/responses/ACCESS_FORBIDDEN"
+        404:
+          $ref: "#/components/responses/WORKSHOP_NOT_FOUND"
+        500:
+          $ref: '#/components/responses/SERVER_ERROR'
+    delete:
+      tags:
+        - workshops
+      summary: Delete a workshop
+      operationId: deleteWorkshop
+      parameters:
+        - in: path
+          name: idWorkshop
+          schema:
+            type: string
+          required: true
+          description: id of the requested workshop
+      responses:
+        204:
+          description: The parent has been successfully deleted
+        401:
+          $ref: "#/components/responses/TOKEN_ERROR"
+        403:
+          $ref: "#/components/responses/ACCESS_FORBIDDEN"
+        404:
+          $ref: "#/components/responses/WORKSHOP_NOT_FOUND"
+        500:
+          $ref: '#/components/responses/SERVER_ERROR'
 components:
   responses:
     EMAIL_ALREADY_TAKEN:
@@ -231,6 +348,13 @@ components:
           schema:
             type: string
             example: PARENT_NOT_FOUND
+    WORKSHOP_NOT_FOUND:
+      description: The requested workshop doesn't exists
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: WORKSHOP_NOT_FOUND
     SERVER_ERROR:
       description: Something wrong (and unexpected) happened on the server side
       content:
@@ -324,3 +448,22 @@ components:
         year:
           type: integer
           example: 2012
+    Workshop:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Initiation à la méditation
+        numberOfParticipants:
+          type: integer
+          example: 15
+        pricePerParticipant:
+          type: float
+          example: 12.5
+        minAge:
+          type: integer
+          example: 8
+        maxAge:
+          type: integer
+          example: 20
+
